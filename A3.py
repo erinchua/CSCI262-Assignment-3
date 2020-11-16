@@ -45,11 +45,31 @@ def initialInput():
         statsDict[statsFileSplitByColon[0]] = statsFileSplitByColon[1:3]
 
     loginsKey = list(statsDict.keys())[0]  # Getting the "Logins" key
+    timeOnlineKey = list(statsDict.keys())[1]  # Getting the "Time online" key
+    emailSentKey = list(statsDict.keys())[2]  # Getting the "Email sent" key
+    emailOpenedKey = list(statsDict.keys())[3]  # Getting the "Email opened" key
+    emailDeletedKey = list(statsDict.keys())[4]  # Getting the "Email deleted" key
 
     for keys in statsDict:
         if (keys == loginsKey):
             statsLoginMean = int(statsDict[keys][0])
             statsLoginStdDev = float(statsDict[keys][1])
+    
+        elif (keys == timeOnlineKey):
+            statsOnlineMean = float(statsDict[keys][0])
+            statsOnlineStdDev = float(statsDict[keys][1])
+
+        elif (keys == emailSentKey):
+            statsEmailSentMean = int(statsDict[keys][0])
+            statsEmailSentStdDev = float(statsDict[keys][1])
+
+        elif (keys == emailOpenedKey):
+            statsEmailOpenedMean = int(statsDict[keys][0])
+            statsEmailOpenedStdDev = float(statsDict[keys][1])
+
+        elif (keys == emailDeletedKey):
+            statsEmailDeletedMean = int(statsDict[keys][0])
+            statsEmailDeletedStdDev = float(statsDict[keys][1])
 
     print("Stats Dictionary: " + str(statsDict), "\n")
     print("Stats Logins Mean: ", statsLoginMean)
@@ -76,14 +96,43 @@ def initialInput():
     print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
 
     for keys in eventsDiscreteDict:
-        if (keys == 'Logins'):
+        if (keys == loginsKey):
             loginsMin = int(eventsDiscreteDict[keys][0])
             if eventsDiscreteDict[keys][1] == '':
                 loginsMax = int(statsLoginMean)*float(statsLoginStdDev)
             else:
                 loginsMax = int(eventsDiscreteDict[keys][1])
 
+        elif (keys == emailSentKey):
+            emailSentMin = int(eventsDiscreteDict[keys][0])
+            if eventsDiscreteDict[keys][1] == '':
+                emailSentMax = int(statsEmailSentMean)*float(statsEmailSentStdDev)
+            else:
+                emailSentMax = int(eventsDiscreteDict[keys][1])
+
+        elif (keys == emailOpenedKey):
+            emailOpenedMin = int(eventsDiscreteDict[keys][0])
+            if eventsDiscreteDict[keys][1] == '':
+                emailOpenedMax = int(statsEmailOpenedMean)*float(statsEmailOpenedStdDev)
+            else:
+                emailOpenedMax = int(eventsDiscreteDict[keys][1])
+
+        elif (keys == emailDeletedKey):
+            emailDeletedMin = int(eventsDiscreteDict[keys][0])
+            if eventsDiscreteDict[keys][1] == '':
+                emailDeletedMax = int(statsEmailDeletedMean)*float(statsEmailDeletedStdDev)
+            else:
+                emailDeletedMax = int(eventsDiscreteDict[keys][1])
+
+###################################################################################
+    # Generate training data
+
     generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
+    # generateData(timeOnlineMin, timeOnlineMax, int(statsOnlineMean), float(statsOnlineStdDev), int(noOfDays)) 
+    generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
+    generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
+    generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
+
 
 ###################################################################################
 
