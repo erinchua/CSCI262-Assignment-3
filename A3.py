@@ -81,8 +81,13 @@ def initialInput():
     eventsFileList = eventsFile.read().split("\n")
     eventsFileList.pop(0)
 
+    print("Len: " + str(len(eventsFileList)))
+
     for i in range(len(eventsFileList)):
         eventsFileSplitByColon = eventsFileList[i].split(":")
+        minVal = eventsFileSplitByColon[2]  #Min
+        maxVal = eventsFileSplitByColon[3]  #Max
+
         if (eventsFileSplitByColon[1] == "C"):
             eventsContinuousDict[eventsFileSplitByColon[0]
                                  ] = eventsFileSplitByColon[2:5]
@@ -92,8 +97,13 @@ def initialInput():
         else:
             print("Event does not exist!")  # Inconsistency because no C/D
 
+
     print("Continuous Dictionary: " + str(eventsContinuousDict) + "\n")
     print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
+    print("Continuous Min: " + str(continuousMin))
+    print("Continuous Max: " + str(continuousMax))
+    print("Discrete Min: " + str(discreteMin))
+    print("Discrete Max: " + str(discreteMax))
 
     for keys in eventsDiscreteDict:
         if (keys == loginsKey):
