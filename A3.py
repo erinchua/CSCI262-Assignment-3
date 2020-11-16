@@ -9,5 +9,5 @@ noOfDays = commandArg[3]
 eventFile = open(eventFileDir, "r")
 statsFile = open(statsFileDir, "r")
 
-print(noOfDays + "\n" + eventFile.read() + "\n")
-print(noOfDays + "\n" + statsFile.read() + "\n")
+print(eventFile.read() + "\n")
+print(statsFile.read() + "\n")
