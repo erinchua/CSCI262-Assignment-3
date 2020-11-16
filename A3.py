@@ -1,4 +1,28 @@
 import os, sys
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import statistics
+
+def generateData(min_val, max_val, mean, std, days):
+
+    # define the distribution
+    dist = stats.truncnorm(
+        (min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
+
+    # define the number of days to train
+    trainingData = (dist.rvs(days))
+
+    # round training data to discrete values
+    roundedData = [round(value, 0) for value in trainingData]
+
+    # get the mean and stdev
+    dataMean = statistics.mean(roundedData)
+    dataStdev = statistics.stdev(roundedData)
+
+    print("Original Data", trainingData)
+    print("Rounded Data", roundedData)
+    print("Mean: ", dataMean)
+    print("St.dev: ", dataStdev)
 
 def initialInput():
     statsDict = {}
@@ -9,6 +33,7 @@ def initialInput():
     currentDir = os.path.dirname(os.path.abspath(__file__))
     eventFileDir = os.path.join(currentDir, commandArg[1])
     statsFileDir = os.path.join(currentDir, commandArg[2])
+    noOfDays = commandArg[3]
 
     eventsFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
@@ -48,9 +73,9 @@ def initialInput():
             print("Event does not exist!")  #Inconsistency because no C/D
 
     print("Continuous Dictionary: " + str(eventsContinuousDict) + "\n")
-    print("Discrete Dictionary: " + str(eventsDiscreteDict))
+    print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
 
-
+    generateData(0, int(statsLoginMean)*float(statsLoginStdDev), int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
 
 ###################################################################################
 if __name__ == "__main__":
