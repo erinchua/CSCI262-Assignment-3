@@ -3,15 +3,14 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import statistics
 
-a, b = 0, 9999
-mu, sigma = 12, 4.5
+a, b = 0, 1440
+mu, sigma = 150.5, 25
 
 
 def generateData(min_val, max_val, mean, std, days):
 
     # define the distribution
-    dist = stats.truncnorm(
-        (min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
+    dist = stats.truncnorm((min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
 
     # define the number of days to train
     trainingData = (dist.rvs(days))
@@ -20,8 +19,8 @@ def generateData(min_val, max_val, mean, std, days):
     roundedData = [round(value, 0) for value in trainingData]
 
     # get the mean and stdev
-    dataMean = statistics.mean(roundedData)
-    dataStdev = statistics.stdev(roundedData)
+    dataMean = statistics.mean(trainingData)
+    dataStdev = statistics.stdev(trainingData)
 
     print("Original Data", trainingData)
     print("Rounded Data", roundedData)
@@ -33,6 +32,7 @@ generateData(a, b, mu, sigma, 5)
 generateData(a, b, mu, sigma, 5)
 generateData(a, b, mu, sigma, 5)
 generateData(a, b, mu, sigma, 5)
+
 
 # def my_distribution(min_val, max_val, mean, std):
 #     scale = max_val - min_val
@@ -62,10 +62,11 @@ generateData(a, b, mu, sigma, 5)
 # my_dist = my_distribution(min_val, max_val, mean, std)
 
 # # Plot distribution PDF
-# x = np.linspace(min_val, max_val, 100)
-# plt.plot(x, my_dist.pdf(x))
+# # x = np.linspace(min_val, max_val, 100)
+# # plt.plot(x, my_dist.pdf(x))
 # # Stats
 # print('mean:', my_dist.mean(), 'std:', my_dist.std())
 # # Get a large sample to check bounds
-# sample = my_dist.rvs(size=100000)
+# sample = my_dist.rvs(size=20)
 # print('min:', sample.min(), 'max:', sample.max())
+# print(sample)
