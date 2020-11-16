@@ -10,7 +10,8 @@ def initialInput():
     eventFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
 
-    eventFileList = eventFile.read().split("\n")
+print(eventFile.read() + "\n")
+print(statsFile.read() + "\n")
 
     print(eventFileList)        
 
