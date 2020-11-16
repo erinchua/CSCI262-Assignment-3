@@ -22,6 +22,8 @@ def generateData(min_val, max_val, mean, std, days):
     print("Mean: ", dataMean)
     print("St.dev: ", dataStdev)
 
+    return(roundedData)
+
 def initialInput():
     statsDict = {}
     eventsDiscreteDict = {}
@@ -127,12 +129,16 @@ def initialInput():
 ###################################################################################
     # Generate training data
 
-    generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
+    loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
     # generateData(timeOnlineMin, timeOnlineMax, int(statsOnlineMean), float(statsOnlineStdDev), int(noOfDays)) 
-    generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
-    generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
-    generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
+    emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
+    emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
+    emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
 
+    print(loginData)
+    print(emailSentData)
+    print(emailOpenData)
+    print(emailDeletedData)
 
 ###################################################################################
 
