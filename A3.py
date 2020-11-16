@@ -10,17 +10,14 @@ def initialInput():
     eventFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
 
-print(eventFile.read() + "\n")
-print(statsFile.read() + "\n")
+    print(eventFile.read() + "\n")
+    print(statsFile.read() + "\n")
 
-    print(eventFileList)        
+    # eventFileList = eventFile.read().split("\n")
 
-    for i in range(len(eventFileList)):
-        splitByColon = eventFileList[i].split(":")
-        print(splitByColon)
-    # print(noOfDays + "\n" + eventFile.read() + "\n")
-    # print(noOfDays + "\n" + statsFile.read() + "\n")
-
+    # for i in range(len(eventFileList)):
+    #     splitByColon = eventFileList[i].split(":")
+    #     print(splitByColon)
 
 if __name__ == "__main__":
     initialInput()
