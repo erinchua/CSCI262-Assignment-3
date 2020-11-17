@@ -41,7 +41,7 @@ def generateData(min_val, max_val, mean, std, days):
     print("final data", bestData)
     print("lowestDiff = ", lowestDiff)
     print()
-    return roundedData
+    return bestData
 
 def generateOnline(min_val, max_val, mean, std, days):
 
@@ -55,19 +55,21 @@ def generateOnline(min_val, max_val, mean, std, days):
         # define the number of days to train
         trainingData = (dist.rvs(days))
 
+        roundedData = [round(value, 2) for value in trainingData]
+
         # get the mean and stdev
-        dataMean = statistics.mean(trainingData)
-        dataStdev = statistics.stdev(trainingData)
+        dataMean = statistics.mean(roundedData)
+        dataStdev = statistics.stdev(roundedData)
         meanStdDiff = abs(mean-dataMean) + abs(std-dataStdev)
         if(lowestDiff == None):
             lowestDiff = meanStdDiff
-            bestData = trainingData
+            bestData = roundedData
         elif(meanStdDiff<lowestDiff):
             lowestDiff = meanStdDiff
-            bestData = trainingData
+            bestData = roundedData
 
         # print("Original Data", i , trainingData)
-        # print("Rounded Data", roundedData)
+        print("Rounded Data", roundedData)
         print("Mean: ", i , dataMean)
         print("St.dev: ", i , dataStdev)
         print("Current diff ",meanStdDiff)
@@ -75,7 +77,15 @@ def generateOnline(min_val, max_val, mean, std, days):
     print("final data", bestData)
     print("lowestDiff = ", lowestDiff)
     print()
+
+    # x = np.linspace(min_val, max_val, 30)
+    # plt.plot(x,dist.pdf(x))
+    # plt.xlim(0,1440)
+    # plt.ylim(0, days)
+
+    # plt.show()
     return trainingData
+    
 
 values = generateOnline(a,b,mu,sigma,5)
 # def my_distribution(min_val, max_val, mean, std):
