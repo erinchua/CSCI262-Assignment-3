@@ -4,10 +4,10 @@ import statistics
 import datetime
 
 def dateTime():
-    datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-    print("datetime = ", datetime)
+    dateTime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    print("datetime = ", dateTime)
 
-    return str(datetime)
+    return str(dateTime)
 
 def logDailyEvent(logFile):
 
