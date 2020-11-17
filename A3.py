@@ -352,7 +352,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         currentDateTime = dateTime()
 
         #Write to TrainingLogs_??.txt 
-        logFileName = "TrainingLogs_" + currentDateTime + ".txt"
+        logFileName = "LogFile_" + currentDateTime + ".txt"
         with open(logFileName, "w") as writer:
             for log in logList:
                 for string in str(log):
@@ -406,7 +406,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     meanStdList.append("\n")
 
     #Write to TrainingMeanStd_??.txt
-    meanFileName = "TrainingMeanStd_" + currentDateTime + ".txt"
+    meanFileName = "MeanStd_" + currentDateTime + ".txt"
     with open(meanFileName, "w") as writer:
         for meanStd in meanStdList:
             for string in str(meanStd):
@@ -490,9 +490,6 @@ if __name__ == "__main__":
 
                         result = activitySimulation("Events.txt", lines[0], lines[1])
                         alertEngine(result[2],result[1])
-
-                        if result[0]:
-                            running = False
                     else:
                         counter = 2
                 else:
