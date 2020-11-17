@@ -7,21 +7,73 @@ Members' Names:
     CHUA CHIA EN, ERIN (6650338)
     BEATRICIA LIYU ZI LING (6650211)
 '''
+
 import os, sys
 import scipy.stats as stats
 import statistics
 import datetime
 
-def meanStdLog(meanStdFile):
+def analysisEngine(finalList, meanStdFileOpen, weightList):
+    print(finalList)
+    print(meanStdFileOpen)
+    print(weightList)
 
-    fileName = "TrainingMeanStd_" + dateTime() + ".txt"
+    a = 0
+    b = 1
+    c = 2
+    d = 3
+    e = 4
+    loginCounterList = []
+    timeOnlineCounterList = []
+    emailsSentCounterList = []
+    emailsOpenedCounterList = []
+    emailsDeletedCounterList = []
 
-    with open(fileName, "w") as writer:
-        for meanStd in meanStdFile:
-            for string in str(meanStd):
-                writer.write(str(string))
-            
-        writer.close()
+    while a < (len(finalList)):
+        loginData = finalList[a]
+        timeOnlineData = finalList[b]
+        emailsSentData = finalList[c]
+        emailsOpenedData = finalList[d]
+        emailsDeletedData = finalList[e]        
+
+        print("loginData: " + str(loginData))
+        print("timeOnlineData: " + str(timeOnlineData))
+        print("emailsSentData: " + str(emailsSentData))
+        print("emailsOpenedData: " + str(emailsOpenedData))
+        print("emailsDeletedData: " + str(emailsDeletedData))
+        
+        #meanStdFileOpen Splits
+        meanStdSplitByEvent = meanStdFileOpen.split(":")
+        print(meanStdSplitByEvent[:4])
+        for i in range(len(meanStdSplitByEvent[:4])):
+            meanStdSplitByDash = meanStdSplitByEvent[i].split("-")
+            print(meanStdSplitByDash)
+            for j in meanStdSplitByDash[1]:
+                meanStdSplitByCommas = meanStdSplitByDash[1].split(",")
+            mean = meanStdSplitByCommas[0]
+            stdDev = meanStdSplitByCommas[1]
+            print(mean)
+            print(stdDev)
+
+            loginCounterList = ((float(mean) - int(loginData))/float(stdDev))*int(weightList[0])
+            timeOnlineCounterList = ((float(mean) - int(timeOnlineData))/float(stdDev))*int(weightList[1])
+            emailsSentCounterList = ((float(mean) - int(emailsSentData))/float(stdDev))*int(weightList[2])
+            emailsOpenedCounterList = ((float(mean) - int(emailsOpenedData))/float(stdDev))*int(weightList[3])
+            emailsDeletedCounterList = ((float(mean) - int(emailsDeletedData))/float(stdDev))*int(weightList[4])
+
+            print("\nlogin: ", abs(loginCounterList))
+            print("\ntimeOnline: ", abs(timeOnlineCounterList))
+            print("\nemailsSent: ", abs(emailsSentCounterList))
+            print("\nemailsOpened: ", abs(emailsOpenedCounterList))
+            print("\nemailsDeleted: ", abs(emailsDeletedCounterList))
+
+        a+=5
+        b+=5
+        c+=5
+        d+=5
+        e+=5
+
+   
 
 # get current datetime format
 def dateTime():
@@ -30,18 +82,6 @@ def dateTime():
 
     return str(dateTime)
 
-# writing to training log files
-def logDailyEvent(logFile):
-
-    fileName = "TrainingLogs_" + dateTime() + ".txt"
-    
-    with open(fileName, "w") as writer:
-        for log in logFile:
-            for string in str(log):
-                writer.write(str(string))
-            
-        writer.close()
-        
 
 def generateData(min_val, max_val, mean, std, days, type):
     lowestDiff = None
@@ -139,6 +179,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     # Events.txt
     eventsFileList = eventsFile.read().split("\n")
     eventsFileList.pop(0)
+    weightList = []
+
     for i in range(len(eventsFileList)):
         eventsFileSplitByColon = eventsFileList[i].split(":")
         if (eventsFileSplitByColon[1] == "C"):
@@ -155,6 +197,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Time online" and timeOnlineExist == True):
             timeOnlineMin = int(eventsContinuousDict[keys][0])
             timeOnlineName = keys
+            timeOnlineWeight = int(eventsContinuousDict[keys][2])
+            weightList.insert(1, timeOnlineWeight)
             if eventsContinuousDict[keys][1] == '':
                 timeOnlineMax = int(statsOnlineMean)*float(statsOnlineStdDev)
             else:
@@ -164,7 +208,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Logins" and loginExist == True):
             loginsMin = int(eventsDiscreteDict[keys][0])
             loginsName = keys
-            totalWeights.append(eventsDiscreteDict[keys][2])
+            loginsWeight = int(eventsDiscreteDict[keys][2])
+            weightList.insert(0, loginsWeight)
             if eventsDiscreteDict[keys][1] == '':
                 loginsMax = int(statsLoginMean)*float(statsLoginStdDev)
             else:
@@ -173,7 +218,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails sent" and emailSentExist == True):
             emailSentMin = int(eventsDiscreteDict[keys][0])
             emailSentName = keys
-            totalWeights.append(eventsDiscreteDict[keys][2])
+            emailSentWeight = int(eventsDiscreteDict[keys][2])
+            weightList.insert(2, emailSentWeight)
             if eventsDiscreteDict[keys][1] == '':
                 emailSentMax = int(statsEmailSentMean)*float(statsEmailSentStdDev)
             else:
@@ -182,7 +228,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails opened" and emailOpenedExist == True):
             emailOpenedMin = int(eventsDiscreteDict[keys][0])
             emailOpenedName = keys
-            totalWeights.append(eventsDiscreteDict[keys][2])
+            emailOpenedWeight = int(eventsDiscreteDict[keys][2])
+            weightList.insert(3, emailOpenedWeight)
             if eventsDiscreteDict[keys][1] == '':
                 emailOpenedMax = int(statsEmailOpenedMean)*float(statsEmailOpenedStdDev)
             else:
@@ -191,7 +238,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails deleted" and emailDeletedExist == True):
             emailDeletedMin = int(eventsDiscreteDict[keys][0])
             emailDeletedName = keys
-            totalWeights.append(eventsDiscreteDict[keys][2])
+            emailDeletedWeight = int(eventsDiscreteDict[keys][2])
+            weightList.insert(4, emailDeletedWeight)
             if eventsDiscreteDict[keys][1] == '':
                 emailDeletedMax = int(statsEmailDeletedMean)*float(statsEmailDeletedStdDev)
             else:
@@ -235,6 +283,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     i = 0
     logList = []
     meanStdList = []
+    finalList = []
 
     #Training Data
     while i < int(noOfDays):      
@@ -245,36 +294,50 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             logList.append(loginsName)
             logList.append("-")
             logList.append(loginData[i])
+            finalList.append(loginData[i])
             logList.append(":")
 
         if (timeOnlineExist == True):
             logList.append(timeOnlineName)
             logList.append("-")
             logList.append(timeOnlineData[i])
+            finalList.append(timeOnlineData[i])
             logList.append(":")
         
         if (emailSentExist == True):
             logList.append(emailSentName)
             logList.append("-")
             logList.append(emailSentData[i])
+            finalList.append(emailSentData[i])
             logList.append(":")
 
         if (emailOpenedExist == True):
             logList.append(emailOpenedName)
             logList.append("-")
             logList.append(emailOpenData[i])
+            finalList.append(emailOpenData[i])
             logList.append(":")
 
         if(emailDeletedExist == True):
             logList.append(emailDeletedName)
             logList.append("-")
             logList.append(emailDeletedData[i])
+            finalList.append(emailDeletedData[i])
             logList.append(":")
         
         logList.append("\n")
 
+        #Get current dateTime
+        currentDateTime = dateTime()
+
         #Write to TrainingLogs_??.txt 
-        logDailyEvent(logList)
+        logFileName = "TrainingLogs_" + currentDateTime + ".txt"
+        with open(logFileName, "w") as writer:
+            for log in logList:
+                for string in str(log):
+                    writer.write(str(string))
+                
+            writer.close()
             
         i+=1
 
@@ -322,12 +385,27 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     meanStdList.append("\n")
 
     #Write to TrainingMeanStd_??.txt
-    meanStdLog(meanStdList)   
+    meanFileName = "TrainingMeanStd_" + currentDateTime + ".txt"
+    with open(meanFileName, "w") as writer:
+        for meanStd in meanStdList:
+            for string in str(meanStd):
+                writer.write(str(string))
             
-    
+        writer.close()
+
+    cont = input("\nSuccessfully generated and logged events. Press 'Enter' to begin analysing...\n")
+
+    logFile = open(logFileName, 'r')
+    logFileOpen = logFile.read()
+
+    meanStdFile = open(meanFileName, 'r')
+    meanStdFileOpen = meanStdFile.read()
+
+    analysisEngine(finalList, meanStdFileOpen, weightList)      
+
+    return cont
     
 ###################################################################################
-
 
 if __name__ == "__main__":
     running = False
@@ -344,28 +422,31 @@ if __name__ == "__main__":
             statsFileDir = os.path.join(currentDir, commandArg[2])
             noOfDays = commandArg[3]
 
+            print("Files have been successfully read. The activity engine will begin generating and logging now...")
             #Activity Simulation Engine and Logs
             activitySimulation(eventFileDir, statsFileDir, noOfDays)
             counter+=1
-            
+
         #Subsequent steps
         else:
-            options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
+            if (counter == 2):
+                options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
-            if (options == "q" or options == "Q"):
-                print("\nShutting down IDS...\n")
-                sys.exit()
+                if (options == "q" or options == "Q"):
+                    print("\nShutting down IDS...\n")
+                    sys.exit()
 
-            elif (options == "c" or options == "C"):
-                newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
+                elif (options == "c" or options == "C"):
+                    newStatsFile = input("\nPlease insert a new set of Stats file and no. of days to be considered\n")
 
-                lines = newStatsFile.split(" ")
-                print(lines[0])
-                print(lines[1])
+                    lines = newStatsFile.split(" ")
 
-                activitySimulation("Events.txt", lines[0], lines[1])
-                
-                cont = input("Enter to continue...\n")
+                    if (len(lines) == "2" or len(lines) == 2):
+                        print("Files have been successfully read. The activity engine will begin generating and logging now...")
 
-                if cont:
-                    running = False
+                        if activitySimulation("Events.txt", lines[0], lines[1]):
+                            running = False
+                    else:
+                        counter = 2
+                else:
+                    print("\nInvalid options!")
