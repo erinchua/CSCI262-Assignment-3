@@ -78,7 +78,7 @@ def generateData(min_val, max_val, mean, std, days):
 
     return(bestData)
 
-def initialInput(eventsFileDir, statsFileDir, noOfDays):
+def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     statsDict = {}
     eventsDiscreteDict = {}
     eventsContinuousDict = {}
@@ -287,12 +287,15 @@ if __name__ == "__main__":
     running = False
 
     while not running:
+        #Initial Inputs
         commandArg = sys.argv
         currentDir = os.path.dirname(os.path.abspath(__file__))
         eventFileDir = os.path.join(currentDir, commandArg[1])
         statsFileDir = os.path.join(currentDir, commandArg[2])
         noOfDays = commandArg[3]
-        initialInput(eventFileDir, statsFileDir, noOfDays)
+
+        #Activity Simulation Engine and Logs
+        activitySimulation(eventFileDir, statsFileDir, noOfDays)
 
         options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
@@ -306,9 +309,6 @@ if __name__ == "__main__":
             lines = newStatsFile.split(" ")
             print(lines[0])
             print(lines[1])
-            print(lines[2])
-
-            initialInput(lines[0], lines[1], lines[2])
             
             cont = input("Enter to continue...\n")
 
