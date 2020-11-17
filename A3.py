@@ -108,7 +108,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             statsLoginStdDev = float(statsDict[keys][1])
             loginExist = True
             
-        if (keys == "Time Online"):
+        if (keys == "Time online"):
             statsOnlineMean = float(statsDict[keys][0])
             statsOnlineStdDev = float(statsDict[keys][1])
             timeOnlineExist = True
@@ -151,6 +151,15 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     print("Continuous Dictionary: " + str(eventsContinuousDict) + "\n")
     print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
 
+    for keys in eventsContinuousDict:
+        if (keys == "Time online" and timeOnlineExist == True):
+            timeOnlineMin = int(eventsContinuousDict[keys][0])
+            timeOnlineName = keys
+            if eventsContinuousDict[keys][1] == '':
+                timeOnlineMax = int(statsOnlineMean)*float(statsOnlineStdDev)
+            else:
+                timeOnlineMax = int(eventsContinuousDict[keys][1])
+
     for keys in eventsDiscreteDict:
         if (keys == "Logins" and loginExist == True):
             loginsMin = int(eventsDiscreteDict[keys][0])
@@ -190,6 +199,10 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     if (loginExist == True):
         loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays),'D')
         print("Logins: " + str(loginData) + "\n")
+
+    if (timeOnlineExist == True):
+        timeOnlineData = generateData(timeOnlineMin, timeOnlineMax, int(statsOnlineMean), float(statsOnlineStdDev), int(noOfDays),'C')
+        print("Time online: " + str(timeOnlineData) + "\n")
         
     if (emailSentExist == True):
         emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays),'D')
@@ -216,6 +229,12 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             logList.append(loginsName)
             logList.append("-")
             logList.append(loginData[i])
+            logList.append(":")
+
+        if (timeOnlineExist == True):
+            logList.append(timeOnlineName)
+            logList.append("-")
+            logList.append(timeOnlineData[i])
             logList.append(":")
         
         if (emailSentExist == True):
@@ -247,33 +266,41 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     if (loginExist == True):
         meanStdList.append(loginsName)
         meanStdList.append("-")
-        meanStdList.append(statistics.mean(loginData))
+        meanStdList.append(round(statistics.mean(loginData), 2))
         meanStdList.append(",")
-        meanStdList.append(statistics.stdev(loginData))
+        meanStdList.append(round(statistics.stdev(loginData), 2))
+        meanStdList.append(":")
+
+    if (timeOnlineExist == True):
+        meanStdList.append(timeOnlineName)
+        meanStdList.append("-")
+        meanStdList.append(round(statistics.mean(timeOnlineData), 2))
+        meanStdList.append(",")
+        meanStdList.append(round(statistics.stdev(timeOnlineData), 2))
         meanStdList.append(":")
     
     if (emailSentExist == True):
         meanStdList.append(emailSentName)
         meanStdList.append("-")
-        meanStdList.append(statistics.mean(emailSentData))
+        meanStdList.append(round(statistics.mean(emailSentData), 2))
         meanStdList.append(",")
-        meanStdList.append(statistics.stdev(emailSentData))
+        meanStdList.append(round(statistics.stdev(emailSentData), 2))
         meanStdList.append(":")
 
     if (emailOpenedExist == True):
         meanStdList.append(emailOpenedName)
         meanStdList.append("-")
-        meanStdList.append(statistics.mean(emailOpenData))
+        meanStdList.append(round(statistics.mean(emailOpenData), 2))
         meanStdList.append(",")
-        meanStdList.append(statistics.stdev(emailOpenData))
+        meanStdList.append(round(statistics.stdev(emailOpenData), 2))
         meanStdList.append(":")
 
     if(emailDeletedExist == True):
         meanStdList.append(emailDeletedName)
         meanStdList.append("-")
-        meanStdList.append(statistics.mean(emailDeletedData))
+        meanStdList.append(round(statistics.mean(emailDeletedData), 2))
         meanStdList.append(",")
-        meanStdList.append(statistics.stdev(emailDeletedData))
+        meanStdList.append(round(statistics.stdev(emailDeletedData), 2))
         meanStdList.append(":")
     
     meanStdList.append("\n")
@@ -288,34 +315,41 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
 
 if __name__ == "__main__":
     running = False
+    counter = 1
 
     while not running:
-        #Initial Input
-        commandArg = sys.argv
-        currentDir = os.path.dirname(os.path.abspath(__file__))
-        eventFileDir = os.path.join(currentDir, commandArg[1])
-        statsFileDir = os.path.join(currentDir, commandArg[2])
-        noOfDays = commandArg[3]
+        
+        #Run the first initial training
+        if (counter == 1):
+            #Initial Input
+            commandArg = sys.argv
+            currentDir = os.path.dirname(os.path.abspath(__file__))
+            eventFileDir = os.path.join(currentDir, commandArg[1])
+            statsFileDir = os.path.join(currentDir, commandArg[2])
+            noOfDays = commandArg[3]
 
-        #Activity Simulation Engine and Logs
-        activitySimulation(eventFileDir, statsFileDir, noOfDays)
-
-        options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
-
-        if (options == "q" or options == "Q"):
-            print("\nShutting down IDS...\n")
-            sys.exit()
-
-        elif (options == "c" or options == "C"):
-            newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
-
-            lines = newStatsFile.split(" ")
-            print(lines[1])
-            print(lines[2])
-
-            activitySimulation("", lines[1], lines[2])
+            #Activity Simulation Engine and Logs
+            activitySimulation(eventFileDir, statsFileDir, noOfDays)
+            counter+=1
             
-            cont = input("Enter to continue...\n")
+        #Subsequent steps
+        else:
+            options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
-            if cont:
-                running = False
+            if (options == "q" or options == "Q"):
+                print("\nShutting down IDS...\n")
+                sys.exit()
+
+            elif (options == "c" or options == "C"):
+                newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
+
+                lines = newStatsFile.split(" ")
+                print(lines[0])
+                print(lines[1])
+
+                activitySimulation("Events.txt", lines[0], lines[1])
+                
+                cont = input("Enter to continue...\n")
+
+                if cont:
+                    running = False
