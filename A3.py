@@ -3,17 +3,6 @@ import scipy.stats as stats
 import statistics
 
 def logDailyEvent(logFile):
-    # if (os.path.exists('./EventsLogs.txt') == False):
-    #     with open("EventsLogs.txt", "w") as f:
-    #         for items in logFile:
-    #             f.write(items)
-    #         f.close()
-    # else:
-        # with open("EventsLogs.txt", "w") as f:
-        #     for items in logFile:
-        #         f.write(items)
-        #     f.close()
-
     with open("EventsLogs.txt", "w") as writer:
         for log in logFile:
             for string in str(log):
@@ -216,4 +205,26 @@ def initialInput():
 
 
 if __name__ == "__main__":
-    initialInput()
+    running = False
+
+    while not running:
+        initialInput()
+
+        options = input("Options: Enter C - Continue or Q - Quit: \n")
+
+        if (options == "q" or options == "Q"):
+            print("\nShutting down IDS...\n")
+            sys.exit()
+
+        elif (options == "c" or options == "C"):
+            newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
+
+            commandArg = sys.argv
+            eventFileDir = commandArg[1]
+            statsFileDir = commandArg[2]
+            noOfDays = commandArg[3]
+            
+            cont = input("Enter to continue...")
+
+            if cont:
+                running = False
