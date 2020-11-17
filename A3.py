@@ -90,6 +90,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
+    totalWeights =[]
+    threshold = 0
 
     eventsFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
@@ -137,10 +139,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     # Events.txt
     eventsFileList = eventsFile.read().split("\n")
     eventsFileList.pop(0)
-
     for i in range(len(eventsFileList)):
         eventsFileSplitByColon = eventsFileList[i].split(":")
-        
         if (eventsFileSplitByColon[1] == "C"):
             eventsContinuousDict[eventsFileSplitByColon[0]] = eventsFileSplitByColon[2:5]
         elif (eventsFileSplitByColon[1] == "D"):
@@ -155,6 +155,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Logins" and loginExist == True):
             loginsMin = int(eventsDiscreteDict[keys][0])
             loginsName = keys
+            totalWeights.append(eventsDiscreteDict[keys][2])
             if eventsDiscreteDict[keys][1] == '':
                 loginsMax = int(statsLoginMean)*float(statsLoginStdDev)
             else:
@@ -163,6 +164,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails sent" and emailSentExist == True):
             emailSentMin = int(eventsDiscreteDict[keys][0])
             emailSentName = keys
+            totalWeights.append(eventsDiscreteDict[keys][2])
             if eventsDiscreteDict[keys][1] == '':
                 emailSentMax = int(statsEmailSentMean)*float(statsEmailSentStdDev)
             else:
@@ -171,6 +173,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails opened" and emailOpenedExist == True):
             emailOpenedMin = int(eventsDiscreteDict[keys][0])
             emailOpenedName = keys
+            totalWeights.append(eventsDiscreteDict[keys][2])
             if eventsDiscreteDict[keys][1] == '':
                 emailOpenedMax = int(statsEmailOpenedMean)*float(statsEmailOpenedStdDev)
             else:
@@ -179,11 +182,24 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         if (keys == "Emails deleted" and emailDeletedExist == True):
             emailDeletedMin = int(eventsDiscreteDict[keys][0])
             emailDeletedName = keys
+            totalWeights.append(eventsDiscreteDict[keys][2])
             if eventsDiscreteDict[keys][1] == '':
                 emailDeletedMax = int(statsEmailDeletedMean)*float(statsEmailDeletedStdDev)
             else:
                 emailDeletedMax = int(eventsDiscreteDict[keys][1])
 
+    for keys in eventsContinuousDict:
+        if(keys=='Time online'):
+            totalWeights.append(eventsContinuousDict[keys][2])
+    ###############################################################################
+
+    # Calculating threshold
+    for weight in totalWeights:
+        threshold+=int(weight)
+    threshold*=2
+    print("Individual weights",totalWeights)
+    print("Total threshold",threshold)
+    
     ###############################################################################
     # Generate training data
 
@@ -247,7 +263,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     if (loginExist == True):
         meanStdList.append(loginsName)
         meanStdList.append("-")
-        meanStdList.append(statistics.mean(loginData))
+        meanStdList.append(round(statistics.mean(loginData),2))
         meanStdList.append(",")
         meanStdList.append(statistics.stdev(loginData))
         meanStdList.append(":")
