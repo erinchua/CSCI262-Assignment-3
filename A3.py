@@ -282,7 +282,7 @@ if __name__ == "__main__":
     while not running:
         initialInput()
 
-        options = input("Options: Enter C - Continue or Q - Quit: \n")
+        options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
         if (options == "q" or options == "Q"):
             print("\nShutting down IDS...\n")
@@ -296,7 +296,7 @@ if __name__ == "__main__":
             statsFileDir = commandArg[2]
             noOfDays = commandArg[3]
             
-            cont = input("Enter to continue...")
+            cont = input("Enter to continue...\n")
 
             if cont:
                 running = False
