@@ -44,8 +44,8 @@ def analysisEngine(finalList, meanStdFileOpen, weightList, dayNumber):
         
         #meanStdFileOpen Splits
         meanStdSplitByEvent = meanStdFileOpen.split(":")
-        print(meanStdSplitByEvent[:5])
-        for i in range(len(meanStdSplitByEvent[:5])):
+        meanStdSplitByEvent.pop()
+        for i in range(len(meanStdSplitByEvent)):
             meanStdSplitByDash = meanStdSplitByEvent[i].split("-")
             print(meanStdSplitByDash)
             for j in meanStdSplitByDash[1]:
