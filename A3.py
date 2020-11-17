@@ -468,8 +468,7 @@ if __name__ == "__main__":
                     if (len(lines) == "2" or len(lines) == 2):
                         print("Files have been successfully read. The activity engine will begin generating and logging now...")
 
-                        if activitySimulation("Events.txt", lines[0], lines[1]):
-                            running = False
+                        activitySimulation("Events.txt", lines[0], lines[1])
                     else:
                         counter = 2
                 else:
