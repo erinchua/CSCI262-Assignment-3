@@ -355,7 +355,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         currentDateTime = dateTime()
 
         #Write to TrainingLogs_??.txt 
-        logFileName = "TrainingLogs_" + currentDateTime + ".txt"
+        logFileName = "LogFile_" + currentDateTime + ".txt"
         with open(logFileName, "w") as writer:
             for log in logList:
                 for string in str(log):
@@ -409,7 +409,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     meanStdList.append("\n")
 
     #Write to TrainingMeanStd_??.txt
-    meanFileName = "TrainingMeanStd_" + currentDateTime + ".txt"
+    meanFileName = "MeanStd_" + currentDateTime + ".txt"
     with open(meanFileName, "w") as writer:
         for meanStd in meanStdList:
             for string in str(meanStd):
