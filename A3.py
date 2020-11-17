@@ -44,26 +44,39 @@ def logDailyEvent(logFile):
         
 
 def generateData(min_val, max_val, mean, std, days):
+    lowestDiff = None
+    bestData = None
+    for i in range(10):
 
-    # define the distribution
-    dist = stats.truncnorm((min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
+        # define the distribution
+        dist = stats.truncnorm((min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
 
-    # define the number of days to train
-    trainingData = (dist.rvs(days))
+        # define the number of days to train
+        trainingData = (dist.rvs(days))
 
-    # round training data to discrete values
-    roundedData = [round(value) for value in trainingData]
+        # round training data to discrete values
+        roundedData = [round(value) for value in trainingData]
 
-    # get the mean and stdev
-    dataMean = statistics.mean(roundedData)
-    dataStdev = statistics.stdev(roundedData)
+        # get the mean and stdev
+        dataMean = statistics.mean(roundedData)
+        dataStdev = statistics.stdev(roundedData)
+        
+        # get absolute different for mean and std, lowest = best fit and store it as best fit data
 
-    print("Original Data", trainingData)
-    # print("Rounded Data", roundedData)
-    print("Mean: ", dataMean)
-    print("St.dev: ", dataStdev)
+        meanStdDiff = abs(mean-dataMean) + abs(std-dataStdev)
+        if(lowestDiff == None):
+            lowestDiff = meanStdDiff
+            bestData = roundedData
+        elif(meanStdDiff<lowestDiff):
+            lowestDiff = meanStdDiff
+            bestData = roundedData
 
-    return(roundedData)
+        # print("Original Data", trainingData)
+        print("Rounded Data", roundedData)
+        print("Mean: ", dataMean)
+        print("St.dev: ", dataStdev)
+
+    return(bestData)
 
 def initialInput():
     statsDict = {}
