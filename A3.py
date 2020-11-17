@@ -1,20 +1,41 @@
+'''
+-----------------------------------------
+Members' Names:
+-----------------------------------------
+    CSCI262 System Security Assignment 3
+    VINCENT YAP WEI SHENG (6649750)
+    CHUA CHIA EN, ERIN (6650338)
+    BEATRICIA LIYU ZI LING (6650211)
+'''
 import os, sys
 import scipy.stats as stats
 import statistics
+import datetime
 
+def meanStdLog(meanStdFile):
+
+    fileName = "TrainingMeanStd_" + dateTime() + ".txt"
+
+    with open(fileName, "w") as writer:
+        for meanStd in meanStdFile:
+            for string in str(meanStd):
+                writer.write(str(string))
+            
+        writer.close()
+
+# get current datetime format
+def dateTime():
+    dateTime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    print("datetime = ", dateTime)
+
+    return str(dateTime)
+
+# writing to training log files
 def logDailyEvent(logFile):
-    # if (os.path.exists('./EventsLogs.txt') == False):
-    #     with open("EventsLogs.txt", "w") as f:
-    #         for items in logFile:
-    #             f.write(items)
-    #         f.close()
-    # else:
-        # with open("EventsLogs.txt", "w") as f:
-        #     for items in logFile:
-        #         f.write(items)
-        #     f.close()
 
-    with open("EventsLogs.txt", "w") as writer:
+    fileName = "TrainingLogs_" + dateTime() + ".txt"
+    
+    with open(fileName, "w") as writer:
         for log in logFile:
             for string in str(log):
                 writer.write(str(string))
@@ -100,12 +121,6 @@ def initialInput():
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
-
-    commandArg = sys.argv
-    currentDir = os.path.dirname(os.path.abspath(__file__))
-    eventFileDir = os.path.join(currentDir, commandArg[1])
-    statsFileDir = os.path.join(currentDir, commandArg[2])
-    noOfDays = commandArg[3]
 
     eventsFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
@@ -221,7 +236,9 @@ def initialInput():
 
     i = 0
     logList = []
+    meanStdList = []
 
+    #Training Data
     while i < int(noOfDays):      
         logList.append(i+1)
         logList.append(":") 
@@ -252,15 +269,82 @@ def initialInput():
         
         logList.append("\n")
 
-        #Write to EventsLogs.txt 
+        #Write to TrainingLogs_??.txt 
         logDailyEvent(logList)
             
         i+=1
 
+    #Mean, Standard Deviation of Training Data    
+    if (loginExist == True):
+        meanStdList.append(loginsName)
+        meanStdList.append("-")
+        meanStdList.append(statistics.mean(loginData))
+        meanStdList.append(",")
+        meanStdList.append(statistics.stdev(loginData))
+        meanStdList.append(":")
+    
+    if (emailSentExist == True):
+        meanStdList.append(emailSentName)
+        meanStdList.append("-")
+        meanStdList.append(statistics.mean(emailSentData))
+        meanStdList.append(",")
+        meanStdList.append(statistics.stdev(emailSentData))
+        meanStdList.append(":")
+
+    if (emailOpenedExist == True):
+        meanStdList.append(emailOpenedName)
+        meanStdList.append("-")
+        meanStdList.append(statistics.mean(emailOpenData))
+        meanStdList.append(",")
+        meanStdList.append(statistics.stdev(emailOpenData))
+        meanStdList.append(":")
+
+    if(emailDeletedExist == True):
+        meanStdList.append(emailDeletedName)
+        meanStdList.append("-")
+        meanStdList.append(statistics.mean(emailDeletedData))
+        meanStdList.append(",")
+        meanStdList.append(statistics.stdev(emailDeletedData))
+        meanStdList.append(":")
+    
+    meanStdList.append("\n")
+
+    #Write to TrainingMeanStd_??.txt
+    meanStdLog(meanStdList)   
+            
     
     
 ###################################################################################
 
 
 if __name__ == "__main__":
-    initialInput()
+    running = False
+
+    while not running:
+        #Initial Inputs
+        commandArg = sys.argv
+        currentDir = os.path.dirname(os.path.abspath(__file__))
+        eventFileDir = os.path.join(currentDir, commandArg[1])
+        statsFileDir = os.path.join(currentDir, commandArg[2])
+        noOfDays = commandArg[3]
+
+        #Activity Simulation Engine and Logs
+        activitySimulation(eventFileDir, statsFileDir, noOfDays)
+
+        options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
+
+        if (options == "q" or options == "Q"):
+            print("\nShutting down IDS...\n")
+            sys.exit()
+
+        elif (options == "c" or options == "C"):
+            newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
+
+            lines = newStatsFile.split(" ")
+            print(lines[0])
+            print(lines[1])
+            
+            cont = input("Enter to continue...\n")
+
+            if cont:
+                running = False
