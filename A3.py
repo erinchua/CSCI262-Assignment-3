@@ -467,6 +467,7 @@ if __name__ == "__main__":
 
             print("Files have been successfully read. The activity engine will begin generating and logging now...")
             #Activity Simulation Engine and Logs
+            #result = cont,threshold,fileDir of dailyCounter from analysisEngine
             result = activitySimulation(eventFileDir, statsFileDir, noOfDays)
             threshold = result[1]
             counter+=1
