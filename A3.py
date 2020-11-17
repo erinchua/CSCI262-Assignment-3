@@ -112,7 +112,7 @@ def generateOnline(min_val, max_val, mean, std, days):
 
     return trainingData
 
-def initialInput():
+def activitySimulation(eventFileDir, statsFileDir, noOfDays):
     statsDict = {}
     eventsDiscreteDict = {}
     eventsContinuousDict = {}
