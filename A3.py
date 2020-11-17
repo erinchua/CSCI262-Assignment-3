@@ -277,4 +277,26 @@ def initialInput():
 
 
 if __name__ == "__main__":
-    initialInput()
+    running = False
+
+    while not running:
+        initialInput()
+
+        options = input("Options: Enter C - Continue or Q - Quit: \n")
+
+        if (options == "q" or options == "Q"):
+            print("\nShutting down IDS...\n")
+            sys.exit()
+
+        elif (options == "c" or options == "C"):
+            newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
+
+            commandArg = sys.argv
+            eventFileDir = commandArg[1]
+            statsFileDir = commandArg[2]
+            noOfDays = commandArg[3]
+            
+            cont = input("Enter to continue...")
+
+            if cont:
+                running = False
