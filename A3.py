@@ -1,20 +1,19 @@
 import os, sys
 import scipy.stats as stats
 import statistics
+import datetime
+
+def dateTime():
+    datetime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    print("datetime = ", datetime)
+
+    return str(datetime)
 
 def logDailyEvent(logFile):
-    # if (os.path.exists('./EventsLogs.txt') == False):
-    #     with open("EventsLogs.txt", "w") as f:
-    #         for items in logFile:
-    #             f.write(items)
-    #         f.close()
-    # else:
-        # with open("EventsLogs.txt", "w") as f:
-        #     for items in logFile:
-        #         f.write(items)
-        #     f.close()
 
-    with open("EventsLogs.txt", "w") as writer:
+    fileName = "EventsLogs_" + dateTime() + ".txt"
+    
+    with open(fileName, "w") as writer:
         for log in logFile:
             for string in str(log):
                 writer.write(str(string))
