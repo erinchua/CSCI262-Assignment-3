@@ -65,7 +65,7 @@ def generateData(min_val, max_val, mean, std, days):
 
     return(roundedData)
 
-def initialInput():
+def initialInput(eventsFileDir, statsFileDir, noOfDays):
     statsDict = {}
     eventsDiscreteDict = {}
     eventsContinuousDict = {}
@@ -74,12 +74,6 @@ def initialInput():
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
-
-    commandArg = sys.argv
-    currentDir = os.path.dirname(os.path.abspath(__file__))
-    eventFileDir = os.path.join(currentDir, commandArg[1])
-    statsFileDir = os.path.join(currentDir, commandArg[2])
-    noOfDays = commandArg[3]
 
     eventsFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
@@ -280,7 +274,12 @@ if __name__ == "__main__":
     running = False
 
     while not running:
-        initialInput()
+        commandArg = sys.argv
+        currentDir = os.path.dirname(os.path.abspath(__file__))
+        eventFileDir = os.path.join(currentDir, commandArg[1])
+        statsFileDir = os.path.join(currentDir, commandArg[2])
+        noOfDays = commandArg[3]
+        initialInput(eventFileDir, statsFileDir, noOfDays)
 
         options = input("Options: Enter C - Continue or Q - Quit: \n")
 
@@ -291,10 +290,12 @@ if __name__ == "__main__":
         elif (options == "c" or options == "C"):
             newStatsFile = input("Please insert a new set of Stats file and no. of days to be considered\n")
 
-            commandArg = sys.argv
-            eventFileDir = commandArg[1]
-            statsFileDir = commandArg[2]
-            noOfDays = commandArg[3]
+            lines = newStatsFile.split(" ")
+            print(lines[0])
+            print(lines[1])
+            print(lines[2])
+
+            initialInput(lines[0], lines[1], lines[2])
             
             cont = input("Enter to continue...")
 
