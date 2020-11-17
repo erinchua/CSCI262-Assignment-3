@@ -43,7 +43,7 @@ def logDailyEvent(logFile):
         writer.close()
         
 
-def generateData(min_val, max_val, mean, std, days):
+def generateData(min_val, max_val, mean, std, days, type):
     lowestDiff = None
     bestData = None
     for i in range(10):
@@ -54,8 +54,12 @@ def generateData(min_val, max_val, mean, std, days):
         # define the number of days to train
         trainingData = (dist.rvs(days))
 
-        # round training data to discrete values
-        roundedData = [round(value) for value in trainingData]
+        if(type=='D'):
+            # round training data to discrete values
+            roundedData = [round(value) for value in trainingData]
+        else:
+             # round training data to 2dp continuous values
+            roundedData = [round(value,2) for value in trainingData]
 
         # get the mean and stdev
         dataMean = statistics.mean(roundedData)
@@ -77,42 +81,7 @@ def generateData(min_val, max_val, mean, std, days):
 
     return(bestData)
 
-def generateOnline(min_val, max_val, mean, std, days):
-
-    lowestDiff = None
-    bestData = None
-    for i in range(10):
-
-        # define the distribution
-        dist = stats.truncnorm((min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
-
-        # define the number of days to train
-        trainingData = (dist.rvs(days))
-
-        # round training data to 2dp values
-        roundedData = [round(value,2) for value in trainingData]
-
-        # get the mean and stdev
-        dataMean = statistics.mean(roundedData)
-        dataStdev = statistics.stdev(roundedData)
-
-        # get absolute different for mean and std, lowest = best fit and store it as best fit data
-        meanStdDiff = abs(mean-dataMean) + abs(std-dataStdev)
-        if(lowestDiff == None):
-            lowestDiff = meanStdDiff
-            bestData = roundedData
-        elif(meanStdDiff<lowestDiff):
-            lowestDiff = meanStdDiff
-            bestData = roundedData
-
-        print("Rounded Data", roundedData)
-        print("Mean: ", i , dataMean)
-        print("St.dev: ", i , dataStdev)
-        print("Current diff ",meanStdDiff)
-
-    return trainingData
-
-def activitySimulation(eventFileDir, statsFileDir, noOfDays):
+def initialInput(eventsFileDir, statsFileDir, noOfDays):
     statsDict = {}
     eventsDiscreteDict = {}
     eventsContinuousDict = {}
@@ -219,19 +188,19 @@ def activitySimulation(eventFileDir, statsFileDir, noOfDays):
     # Generate training data
 
     if (loginExist == True):
-        loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
+        loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays),'D')
         print("Logins: " + str(loginData) + "\n")
         
     if (emailSentExist == True):
-        emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
+        emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays),'D')
         print("Emails sent: " + str(emailSentData) + "\n")
 
     if (emailOpenedExist == True):
-        emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
+        emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays),'D')
         print("Emails opened: " + str(emailOpenData) + "\n")
 
     if (emailDeletedExist == True):
-        emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
+        emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays),'D')
         print("Emails deleted: " + str(emailDeletedData) + "\n")
 
     i = 0
@@ -321,15 +290,12 @@ if __name__ == "__main__":
     running = False
 
     while not running:
-        #Initial Inputs
         commandArg = sys.argv
         currentDir = os.path.dirname(os.path.abspath(__file__))
         eventFileDir = os.path.join(currentDir, commandArg[1])
         statsFileDir = os.path.join(currentDir, commandArg[2])
         noOfDays = commandArg[3]
-
-        #Activity Simulation Engine and Logs
-        activitySimulation(eventFileDir, statsFileDir, noOfDays)
+        initialInput(eventFileDir, statsFileDir, noOfDays)
 
         options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
@@ -343,6 +309,9 @@ if __name__ == "__main__":
             lines = newStatsFile.split(" ")
             print(lines[0])
             print(lines[1])
+            print(lines[2])
+
+            initialInput(lines[0], lines[1], lines[2])
             
             cont = input("Enter to continue...\n")
 
