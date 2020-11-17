@@ -13,11 +13,7 @@ import scipy.stats as stats
 import statistics
 import datetime
 
-def analysisEngine(finalList, meanStdFileOpen, weightList):
-    print(finalList)
-    print(meanStdFileOpen)
-    print(weightList)
-
+def analysisEngine(finalList, meanStdFileOpen, weightList, dayNumber):
     a = 0
     b = 1
     c = 2
@@ -28,44 +24,46 @@ def analysisEngine(finalList, meanStdFileOpen, weightList):
     emailsSentCounterList = []
     emailsOpenedCounterList = []
     emailsDeletedCounterList = []
+    totalCount = []
 
     while a < (len(finalList)):
+
+        #Getting the data out by the respective positions
         loginData = finalList[a]
         timeOnlineData = finalList[b]
         emailsSentData = finalList[c]
         emailsOpenedData = finalList[d]
         emailsDeletedData = finalList[e]        
 
-        print("loginData: " + str(loginData))
-        print("timeOnlineData: " + str(timeOnlineData))
-        print("emailsSentData: " + str(emailsSentData))
-        print("emailsOpenedData: " + str(emailsOpenedData))
-        print("emailsDeletedData: " + str(emailsDeletedData))
+        ##For printing out reference
+        # print("loginData: " + str(loginData))
+        # print("timeOnlineData: " + str(timeOnlineData))
+        # print("emailsSentData: " + str(emailsSentData))
+        # print("emailsOpenedData: " + str(emailsOpenedData))
+        # print("emailsDeletedData: " + str(emailsDeletedData))
         
         #meanStdFileOpen Splits
         meanStdSplitByEvent = meanStdFileOpen.split(":")
-        print(meanStdSplitByEvent[:4])
-        for i in range(len(meanStdSplitByEvent[:4])):
+        print(meanStdSplitByEvent[:5])
+        for i in range(len(meanStdSplitByEvent[:5])):
             meanStdSplitByDash = meanStdSplitByEvent[i].split("-")
             print(meanStdSplitByDash)
             for j in meanStdSplitByDash[1]:
                 meanStdSplitByCommas = meanStdSplitByDash[1].split(",")
             mean = meanStdSplitByCommas[0]
             stdDev = meanStdSplitByCommas[1]
-            print(mean)
-            print(stdDev)
 
-            loginCounterList = ((float(mean) - int(loginData))/float(stdDev))*int(weightList[0])
-            timeOnlineCounterList = ((float(mean) - int(timeOnlineData))/float(stdDev))*int(weightList[1])
-            emailsSentCounterList = ((float(mean) - int(emailsSentData))/float(stdDev))*int(weightList[2])
-            emailsOpenedCounterList = ((float(mean) - int(emailsOpenedData))/float(stdDev))*int(weightList[3])
-            emailsDeletedCounterList = ((float(mean) - int(emailsDeletedData))/float(stdDev))*int(weightList[4])
-
-            print("\nlogin: ", abs(loginCounterList))
-            print("\ntimeOnline: ", abs(timeOnlineCounterList))
-            print("\nemailsSent: ", abs(emailsSentCounterList))
-            print("\nemailsOpened: ", abs(emailsOpenedCounterList))
-            print("\nemailsDeleted: ", abs(emailsDeletedCounterList))
+            #Appending the calculated numbers for each day and each event to respective event's list
+            if (meanStdSplitByDash[0] == "Logins"):
+                loginCounterList.append(abs(((float(mean) - int(loginData))/float(stdDev))*int(weightList[0])))
+            if (meanStdSplitByDash[0] == "Time online"):
+                timeOnlineCounterList.append(abs(((float(mean) - int(timeOnlineData))/float(stdDev))*int(weightList[1])))
+            if(meanStdSplitByDash[0] == "Emails sent"):
+                emailsSentCounterList.append(abs(((float(mean) - int(emailsSentData))/float(stdDev))*int(weightList[2])))
+            if(meanStdSplitByDash[0] == "Emails opened"):
+                emailsOpenedCounterList.append(abs(((float(mean) - int(emailsOpenedData))/float(stdDev))*int(weightList[3])))
+            if(meanStdSplitByDash[0] == "Emails deleted"):
+                emailsDeletedCounterList.append(abs(((float(mean) - int(emailsDeletedData))/float(stdDev))*int(weightList[4])))
 
         a+=5
         b+=5
@@ -73,7 +71,33 @@ def analysisEngine(finalList, meanStdFileOpen, weightList):
         d+=5
         e+=5
 
-   
+    ##For printing out reference
+    # print("final login: ", (loginCounterList))
+    # print("final time: ", (timeOnlineCounterList))
+    # print("final sent: ", (emailsSentCounterList))
+    # print("final opened: ", (emailsOpenedCounterList))
+    # print("final deleted: ", (emailsDeletedCounterList))     
+
+    #Appending to totalCount list
+    for i in range(int(dayNumber)):
+        totalDailyCount = loginCounterList[i] + timeOnlineCounterList[i] + emailsSentCounterList[i] + emailsOpenedCounterList[i] + emailsDeletedCounterList[i]
+        totalCount.append(i+1)
+        totalCount.append(":")
+        totalCount.append("Total Count")
+        totalCount.append(":")
+        totalCount.append(round(totalDailyCount, 2))
+        totalCount.append(":\n")
+
+    #Writing to DailyCounter_???.txt
+    currentDateTime = dateTime()
+    fileName = "DailyCounter_" + currentDateTime + ".txt"
+    with open(fileName, 'w') as writer:
+        for i in totalCount:
+            writer.write(str(i))
+        writer.close()
+    
+    return fileName
+    
 
 # get current datetime format
 def dateTime():
@@ -401,7 +425,7 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     meanStdFile = open(meanFileName, 'r')
     meanStdFileOpen = meanStdFile.read()
 
-    analysisEngine(finalList, meanStdFileOpen, weightList)      
+    analysisEngine(finalList, meanStdFileOpen, weightList, noOfDays)      
 
     return cont
     
