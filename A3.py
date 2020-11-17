@@ -154,6 +154,8 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
+    totalWeights =[]
+    threshold = 0
 
     eventsFile = open(eventFileDir, "r")
     statsFile = open(statsFileDir, "r")
@@ -205,7 +207,6 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
 
     for i in range(len(eventsFileList)):
         eventsFileSplitByColon = eventsFileList[i].split(":")
-        
         if (eventsFileSplitByColon[1] == "C"):
             eventsContinuousDict[eventsFileSplitByColon[0]] = eventsFileSplitByColon[2:5]
         elif (eventsFileSplitByColon[1] == "D"):
@@ -268,6 +269,18 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             else:
                 emailDeletedMax = int(eventsDiscreteDict[keys][1])
 
+    for keys in eventsContinuousDict:
+        if(keys=='Time online'):
+            totalWeights.append(eventsContinuousDict[keys][2])
+    ###############################################################################
+
+    # Calculating threshold
+    for weight in totalWeights:
+        threshold+=int(weight)
+    threshold*=2
+    print("Individual weights",totalWeights)
+    print("Total threshold",threshold)
+    
     ###############################################################################
     # Generate training data
 
@@ -455,8 +468,7 @@ if __name__ == "__main__":
                     if (len(lines) == "2" or len(lines) == 2):
                         print("Files have been successfully read. The activity engine will begin generating and logging now...")
 
-                        if activitySimulation("Events.txt", lines[0], lines[1]):
-                            running = False
+                        activitySimulation("Events.txt", lines[0], lines[1])
                     else:
                         counter = 2
                 else:
