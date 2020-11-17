@@ -41,7 +41,6 @@ def generateData(min_val, max_val, mean, std, days):
         dataStdev = statistics.stdev(roundedData)
         
         # get absolute different for mean and std, lowest = best fit and store it as best fit data
-
         meanStdDiff = abs(mean-dataMean) + abs(std-dataStdev)
         if(lowestDiff == None):
             lowestDiff = meanStdDiff
@@ -56,6 +55,41 @@ def generateData(min_val, max_val, mean, std, days):
         print("St.dev: ", dataStdev)
 
     return(bestData)
+
+def generateOnline(min_val, max_val, mean, std, days):
+
+    lowestDiff = None
+    bestData = None
+    for i in range(10):
+
+        # define the distribution
+        dist = stats.truncnorm((min_val-mean)/std, (max_val-mean)/std, loc=mean, scale=std)
+
+        # define the number of days to train
+        trainingData = (dist.rvs(days))
+
+        # round training data to 2dp values
+        roundedData = [round(value,2) for value in trainingData]
+
+        # get the mean and stdev
+        dataMean = statistics.mean(roundedData)
+        dataStdev = statistics.stdev(roundedData)
+
+        # get absolute different for mean and std, lowest = best fit and store it as best fit data
+        meanStdDiff = abs(mean-dataMean) + abs(std-dataStdev)
+        if(lowestDiff == None):
+            lowestDiff = meanStdDiff
+            bestData = roundedData
+        elif(meanStdDiff<lowestDiff):
+            lowestDiff = meanStdDiff
+            bestData = roundedData
+
+        print("Rounded Data", roundedData)
+        print("Mean: ", i , dataMean)
+        print("St.dev: ", i , dataStdev)
+        print("Current diff ",meanStdDiff)
+
+    return trainingData
 
 def initialInput():
     statsDict = {}
