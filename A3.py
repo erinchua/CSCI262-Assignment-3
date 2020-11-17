@@ -170,10 +170,10 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             statsEmailDeletedStdDev = float(statsDict[keys][1])
             emailDeletedExist = True
 
-    # print("Stats Dictionary: " + str(statsDict), "\n")
+    print("Stats Dictionary: " + str(statsDict), "\n")
     # print("Stats Logins Mean: ", statsLoginMean)
     # print("Stats Logins Std Dev: ", statsLoginStdDev, "\n")
-
+    
     ################################################################################
 
     # Events.txt
@@ -405,6 +405,15 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
 
     return cont
     
+###################################################################################
+
+# Alert Engine 
+
+def alertEngine():
+    dailyCounterFile = open('DailyCounter','r').read()
+    print(dailyCounterFile)
+
+
 ###################################################################################
 
 if __name__ == "__main__":
