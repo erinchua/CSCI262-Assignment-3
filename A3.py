@@ -281,7 +281,7 @@ if __name__ == "__main__":
         noOfDays = commandArg[3]
         initialInput(eventFileDir, statsFileDir, noOfDays)
 
-        options = input("Options: Enter C - Continue or Q - Quit: \n")
+        options = input("\nOptions: Enter C - Continue or Q - Quit: \n")
 
         if (options == "q" or options == "Q"):
             print("\nShutting down IDS...\n")
@@ -297,7 +297,7 @@ if __name__ == "__main__":
 
             initialInput(lines[0], lines[1], lines[2])
             
-            cont = input("Enter to continue...")
+            cont = input("Enter to continue...\n")
 
             if cont:
                 running = False
