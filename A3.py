@@ -2,6 +2,26 @@ import os, sys
 import scipy.stats as stats
 import statistics
 
+def logDailyEvent(logFile):
+    # if (os.path.exists('./EventsLogs.txt') == False):
+    #     with open("EventsLogs.txt", "w") as f:
+    #         for items in logFile:
+    #             f.write(items)
+    #         f.close()
+    # else:
+        # with open("EventsLogs.txt", "w") as f:
+        #     for items in logFile:
+        #         f.write(items)
+        #     f.close()
+
+    with open("EventsLogs.txt", "w") as writer:
+        for log in logFile:
+            for string in str(log):
+                writer.write(str(string))
+            
+        writer.close()
+        
+
 def generateData(min_val, max_val, mean, std, days):
 
     # define the distribution
@@ -22,12 +42,17 @@ def generateData(min_val, max_val, mean, std, days):
     print("Mean: ", dataMean)
     print("St.dev: ", dataStdev)
 
-    return(roundedData)    
+    return(roundedData)
 
 def initialInput():
     statsDict = {}
     eventsDiscreteDict = {}
     eventsContinuousDict = {}
+    loginExist = False
+    timeOnlineExist = False
+    emailSentExist = False
+    emailOpenedExist = False
+    emailDeletedExist = False
 
     commandArg = sys.argv
     currentDir = os.path.dirname(os.path.abspath(__file__))
@@ -46,36 +71,35 @@ def initialInput():
         statsFileSplitByColon = statsFileList[i].split(":")
         statsDict[statsFileSplitByColon[0]] = statsFileSplitByColon[1:3]
 
-    # loginsKey = list(statsDict.keys())[0]  # Getting the "Logins" key
-    # timeOnlineKey = list(statsDict.keys())[1]  # Getting the "Time online" key
-    # emailSentKey = list(statsDict.keys())[2]  # Getting the "Email sent" key
-    # emailOpenedKey = list(statsDict.keys())[3]  # Getting the "Email opened" key
-    # emailDeletedKey = list(statsDict.keys())[4]  # Getting the "Email deleted" key
-
     for keys in statsDict:
         if (keys == "Logins"):
             statsLoginMean = float(statsDict[keys][0])
             statsLoginStdDev = float(statsDict[keys][1])
-    
+            loginExist = True
+            
         if (keys == "Time Online"):
             statsOnlineMean = float(statsDict[keys][0])
             statsOnlineStdDev = float(statsDict[keys][1])
+            timeOnlineExist = True
 
         if (keys == "Emails sent"):
             statsEmailSentMean = float(statsDict[keys][0])
             statsEmailSentStdDev = float(statsDict[keys][1])
+            emailSentExist = True
 
         if (keys == "Emails opened"):
             statsEmailOpenedMean = float(statsDict[keys][0])
             statsEmailOpenedStdDev = float(statsDict[keys][1])
+            emailOpenedExist = True
 
         if (keys == "Emails deleted"):
             statsEmailDeletedMean = float(statsDict[keys][0])
             statsEmailDeletedStdDev = float(statsDict[keys][1])
+            emailDeletedExist = True
 
-    print("Stats Dictionary: " + str(statsDict), "\n")
-    print("Stats Logins Mean: ", statsLoginMean)
-    print("Stats Logins Std Dev: ", statsLoginStdDev, "\n")
+    # print("Stats Dictionary: " + str(statsDict), "\n")
+    # print("Stats Logins Mean: ", statsLoginMean)
+    # print("Stats Logins Std Dev: ", statsLoginStdDev, "\n")
 
     ################################################################################
 
@@ -97,54 +121,97 @@ def initialInput():
     print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
 
     for keys in eventsDiscreteDict:
-        if (keys == "Logins"):
+        if (keys == "Logins" and loginExist == True):
             loginsMin = int(eventsDiscreteDict[keys][0])
+            loginsName = keys
             if eventsDiscreteDict[keys][1] == '':
                 loginsMax = int(statsLoginMean)*float(statsLoginStdDev)
             else:
                 loginsMax = int(eventsDiscreteDict[keys][1])
 
-        if (keys == "Emails sent"):
+        if (keys == "Emails sent" and emailSentExist == True):
             emailSentMin = int(eventsDiscreteDict[keys][0])
+            emailSentName = keys
             if eventsDiscreteDict[keys][1] == '':
                 emailSentMax = int(statsEmailSentMean)*float(statsEmailSentStdDev)
             else:
                 emailSentMax = int(eventsDiscreteDict[keys][1])
 
-        if (keys == "Emails opened"):
+        if (keys == "Emails opened" and emailOpenedExist == True):
             emailOpenedMin = int(eventsDiscreteDict[keys][0])
+            emailOpenedName = keys
             if eventsDiscreteDict[keys][1] == '':
                 emailOpenedMax = int(statsEmailOpenedMean)*float(statsEmailOpenedStdDev)
             else:
                 emailOpenedMax = int(eventsDiscreteDict[keys][1])
 
-        if (keys == "Emails deleted"):
+        if (keys == "Emails deleted" and emailDeletedExist == True):
             emailDeletedMin = int(eventsDiscreteDict[keys][0])
+            emailDeletedName = keys
             if eventsDiscreteDict[keys][1] == '':
                 emailDeletedMax = int(statsEmailDeletedMean)*float(statsEmailDeletedStdDev)
             else:
                 emailDeletedMax = int(eventsDiscreteDict[keys][1])
 
-###################################################################################
+    ###############################################################################
     # Generate training data
 
-    for keys in eventsDiscreteDict:
-        if (keys == "Logins"):
-            loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
-            print("Logins " + str(loginData) + "\n")
+    if (loginExist == True):
+        loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays))
+        print("Logins: " + str(loginData) + "\n")
+        
+    if (emailSentExist == True):
+        emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
+        print("Emails sent: " + str(emailSentData) + "\n")
 
-        if (keys == "Emails sent"):
-            emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays))
-            print("Emails sent " + str(emailSentData) + "\n")
+    if (emailOpenedExist == True):
+        emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
+        print("Emails opened: " + str(emailOpenData) + "\n")
 
-        if (keys == "Emails opened"):
-            emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays))
-            print("Emails opened " + str(emailOpenData) + "\n")
+    if (emailDeletedExist == True):
+        emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
+        print("Emails deleted: " + str(emailDeletedData) + "\n")
 
-        if (keys == "Emails deleted"):
-            emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays))
-            print("Emails deleted " + str(emailDeletedData) + "\n")
+    i = 0
+    logList = []
 
+    while i < int(noOfDays):      
+        logList.append(i+1)
+        logList.append(":") 
+
+        if (loginExist == True):
+            logList.append(loginsName)
+            logList.append("-")
+            logList.append(loginData[i])
+            logList.append(":")
+        
+        if (emailSentExist == True):
+            logList.append(emailSentName)
+            logList.append("-")
+            logList.append(emailSentData[i])
+            logList.append(":")
+
+        if (emailOpenedExist == True):
+            logList.append(emailOpenedName)
+            logList.append("-")
+            logList.append(emailOpenData[i])
+            logList.append(":")
+
+        if(emailDeletedExist == True):
+            logList.append(emailDeletedName)
+            logList.append("-")
+            logList.append(emailDeletedData[i])
+            logList.append(":")
+        
+        logList.append("\n")
+
+        #Write to EventsLogs.txt 
+        logDailyEvent(logList)
+            
+        i+=1
+
+    
+    
 ###################################################################################
 
 
