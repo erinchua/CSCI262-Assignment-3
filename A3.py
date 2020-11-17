@@ -194,10 +194,10 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             statsEmailDeletedStdDev = float(statsDict[keys][1])
             emailDeletedExist = True
 
-    # print("Stats Dictionary: " + str(statsDict), "\n")
+    print("Stats Dictionary: " + str(statsDict), "\n")
     # print("Stats Logins Mean: ", statsLoginMean)
     # print("Stats Logins Std Dev: ", statsLoginStdDev, "\n")
-
+    
     ################################################################################
 
     # Events.txt
@@ -269,16 +269,13 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             else:
                 emailDeletedMax = int(eventsDiscreteDict[keys][1])
 
-    for keys in eventsContinuousDict:
-        if(keys=='Time online'):
-            totalWeights.append(eventsContinuousDict[keys][2])
     ###############################################################################
 
     # Calculating threshold
-    for weight in totalWeights:
+    for weight in weightList:
         threshold+=int(weight)
     threshold*=2
-    print("Individual weights",totalWeights)
+    print("Individual weights",weightList)
     print("Total threshold",threshold)
     
     ###############################################################################
@@ -425,16 +422,38 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     meanStdFile = open(meanFileName, 'r')
     meanStdFileOpen = meanStdFile.read()
 
-    analysisEngine(finalList, meanStdFileOpen, weightList, noOfDays)      
+    fileName = analysisEngine(finalList, meanStdFileOpen, weightList, noOfDays)      
 
-    return cont
+    return cont,threshold,fileName
     
+###################################################################################
+
+# Alert Engine 
+
+def alertEngine(fileDir,threshold):
+    dailyCounterFile = open(fileDir,'r').read()
+    print(dailyCounterFile)
+    print("Threshold is",threshold)
+
+    dailyCounterFileList = dailyCounterFile.split("\n")
+
+    print(dailyCounterFileList)
+    for line in dailyCounterFileList[:-1]:
+        splitByColon = line.split(':')
+        day = splitByColon[0]
+        dailyCounter = float(splitByColon[2])
+        if dailyCounter >= threshold:
+            print("Day",day,"flagged! With anomaly counter of",dailyCounter)
+        else:
+            print("Day",day,"is ok. With daily counter of", dailyCounter)
+
+
 ###################################################################################
 
 if __name__ == "__main__":
     running = False
     counter = 1
-
+    threshold = 0
     while not running:
         
         #Run the first initial training
@@ -448,7 +467,9 @@ if __name__ == "__main__":
 
             print("Files have been successfully read. The activity engine will begin generating and logging now...")
             #Activity Simulation Engine and Logs
-            activitySimulation(eventFileDir, statsFileDir, noOfDays)
+            #result = cont,threshold,fileDir of dailyCounter from analysisEngine
+            result = activitySimulation(eventFileDir, statsFileDir, noOfDays)
+            threshold = result[1]
             counter+=1
 
         #Subsequent steps
@@ -468,7 +489,8 @@ if __name__ == "__main__":
                     if (len(lines) == "2" or len(lines) == 2):
                         print("Files have been successfully read. The activity engine will begin generating and logging now...")
 
-                        activitySimulation("Events.txt", lines[0], lines[1])
+                        result = activitySimulation("Events.txt", lines[0], lines[1])
+                        alertEngine(result[2],result[1])
                     else:
                         counter = 2
                 else:
