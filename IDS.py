@@ -34,20 +34,12 @@ def analysisEngine(finalList, meanStdFileOpen, weightList, dayNumber):
         emailsSentData = finalList[c]
         emailsOpenedData = finalList[d]
         emailsDeletedData = finalList[e]        
-
-        ##For printing out reference
-        # print("loginData: " + str(loginData))
-        # print("timeOnlineData: " + str(timeOnlineData))
-        # print("emailsSentData: " + str(emailsSentData))
-        # print("emailsOpenedData: " + str(emailsOpenedData))
-        # print("emailsDeletedData: " + str(emailsDeletedData))
         
         #meanStdFileOpen Splits
         meanStdSplitByEvent = meanStdFileOpen.split(":")
         meanStdSplitByEvent.pop()
         for i in range(len(meanStdSplitByEvent)):
             meanStdSplitByDash = meanStdSplitByEvent[i].split("-")
-            print(meanStdSplitByDash)
             for j in meanStdSplitByDash[1]:
                 meanStdSplitByCommas = meanStdSplitByDash[1].split(",")
             mean = meanStdSplitByCommas[0]
@@ -69,14 +61,7 @@ def analysisEngine(finalList, meanStdFileOpen, weightList, dayNumber):
         b+=5
         c+=5
         d+=5
-        e+=5
-
-    ##For printing out reference
-    # print("final login: ", (loginCounterList))
-    # print("final time: ", (timeOnlineCounterList))
-    # print("final sent: ", (emailsSentCounterList))
-    # print("final opened: ", (emailsOpenedCounterList))
-    # print("final deleted: ", (emailsDeletedCounterList))     
+        e+=5   
 
     #Appending to totalCount list
     for i in range(int(dayNumber)):
@@ -102,7 +87,6 @@ def analysisEngine(finalList, meanStdFileOpen, weightList, dayNumber):
 # get current datetime format
 def dateTime():
     dateTime = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-    print("datetime = ", dateTime)
 
     return str(dateTime)
 
@@ -138,11 +122,6 @@ def generateData(min_val, max_val, mean, std, days, type):
             lowestDiff = meanStdDiff
             bestData = roundedData
 
-        # print("Original Data", trainingData)
-        print("Rounded Data", roundedData)
-        print("Mean: ", dataMean)
-        print("St.dev: ", dataStdev)
-
     return(bestData)
 
 def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
@@ -154,7 +133,6 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
-    totalWeights =[]
     threshold = 0
 
     eventsFile = open(eventFileDir, "r")
@@ -194,9 +172,6 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
             statsEmailDeletedStdDev = float(statsDict[keys][1])
             emailDeletedExist = True
 
-    print("Stats Dictionary: " + str(statsDict), "\n")
-    # print("Stats Logins Mean: ", statsLoginMean)
-    # print("Stats Logins Std Dev: ", statsLoginStdDev, "\n")
     
     ################################################################################
 
@@ -214,8 +189,6 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
         else:
             print("Event does not exist!")  # Inconsistency because no C/D
 
-    print("Continuous Dictionary: " + str(eventsContinuousDict) + "\n")
-    print("Discrete Dictionary: " + str(eventsDiscreteDict) + "\n")
 
     for keys in eventsContinuousDict:
         if (keys == "Time online" and timeOnlineExist == True):
@@ -275,31 +248,30 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     for weight in weightList:
         threshold+=int(weight)
     threshold*=2
-    print("Individual weights",weightList)
-    print("Total threshold",threshold)
+    # print("Individual weights: ",weightList)
     
     ###############################################################################
     # Generate training data
 
     if (loginExist == True):
         loginData = generateData(loginsMin, loginsMax, int(statsLoginMean), float(statsLoginStdDev), int(noOfDays),'D')
-        print("Logins: " + str(loginData) + "\n")
+        # print("Logins: " + str(loginData) + "\n")
 
     if (timeOnlineExist == True):
         timeOnlineData = generateData(timeOnlineMin, timeOnlineMax, int(statsOnlineMean), float(statsOnlineStdDev), int(noOfDays),'C')
-        print("Time online: " + str(timeOnlineData) + "\n")
+        # print("Time online: " + str(timeOnlineData) + "\n")
         
     if (emailSentExist == True):
         emailSentData = generateData(emailSentMin, emailSentMax, int(statsEmailSentMean), float(statsEmailSentStdDev), int(noOfDays),'D')
-        print("Emails sent: " + str(emailSentData) + "\n")
+        # print("Emails sent: " + str(emailSentData) + "\n")
 
     if (emailOpenedExist == True):
         emailOpenData = generateData(emailOpenedMin, emailOpenedMax, int(statsEmailOpenedMean), float(statsEmailOpenedStdDev), int(noOfDays),'D')
-        print("Emails opened: " + str(emailOpenData) + "\n")
+        # print("Emails opened: " + str(emailOpenData) + "\n")
 
     if (emailDeletedExist == True):
         emailDeletedData = generateData(emailDeletedMin, emailDeletedMax, int(statsEmailDeletedMean), float(statsEmailDeletedStdDev), int(noOfDays),'D')
-        print("Emails deleted: " + str(emailDeletedData) + "\n")
+        # print("Emails deleted: " + str(emailDeletedData) + "\n")
 
     i = 0
     logList = []
@@ -432,12 +404,10 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
 
 def alertEngine(fileDir,threshold):
     dailyCounterFile = open(fileDir,'r').read()
-    print(dailyCounterFile)
-    print("Threshold is",threshold)
+    print("Threshold is: ",threshold)
 
     dailyCounterFileList = dailyCounterFile.split("\n")
 
-    print(dailyCounterFileList)
     for line in dailyCounterFileList[:-1]:
         splitByColon = line.split(':')
         day = splitByColon[0]
@@ -465,7 +435,7 @@ if __name__ == "__main__":
             statsFileDir = os.path.join(currentDir, commandArg[2])
             noOfDays = commandArg[3]
 
-            print("Files have been successfully read. The activity engine will begin generating and logging now...")
+            print("\nFiles have been successfully read. The activity engine will begin generating and logging now...")
             #Activity Simulation Engine and Logs
             #result = cont,threshold,fileDir of dailyCounter from analysisEngine
             result = activitySimulation(eventFileDir, statsFileDir, noOfDays)
@@ -487,7 +457,7 @@ if __name__ == "__main__":
                     lines = newStatsFile.split(" ")
 
                     if (len(lines) == "2" or len(lines) == 2):
-                        print("Files have been successfully read. The activity engine will begin generating and logging now...")
+                        print("\nFiles have been successfully read. The activity engine will begin generating and logging now...")
 
                         result = activitySimulation("Events.txt", lines[0], lines[1])
                         alertEngine(result[2],result[1])
