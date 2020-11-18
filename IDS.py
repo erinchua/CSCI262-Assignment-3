@@ -464,4 +464,4 @@ if __name__ == "__main__":
                     else:
                         counter = 2
                 else:
-                    print("\nInvalid options!")
+                    print("\nInvalid option!")
