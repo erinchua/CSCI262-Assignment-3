@@ -133,7 +133,6 @@ def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
     emailSentExist = False
     emailOpenedExist = False
     emailDeletedExist = False
-    totalWeights =[]
     threshold = 0
 
     eventsFile = open(eventFileDir, "r")
