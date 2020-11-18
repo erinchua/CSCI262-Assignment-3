@@ -138,11 +138,6 @@ def generateData(min_val, max_val, mean, std, days, type):
             lowestDiff = meanStdDiff
             bestData = roundedData
 
-        # print("Original Data", trainingData)
-        print("Rounded Data", roundedData)
-        print("Mean: ", dataMean)
-        print("St.dev: ", dataStdev)
-
     return(bestData)
 
 def activitySimulation(eventsFileDir, statsFileDir, noOfDays):
